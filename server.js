@@ -4,6 +4,7 @@ const express = require('express');
 require('dotenv').config();
 const session = require('express-session');
 const mongoose = require('mongoose');
+require("./models/connection");
 
 //initialize app
 const app = express();
@@ -48,23 +49,13 @@ const users=[
     }
 ];
 
-// async function getUser(username){
-//     const user = await users.find((user)=>user.username === username);
-//     return user
-// };
-
-// getUser("kigen").then(console.log)
-// // console.log(getUser("kigen"));
-
 app.get('/login',userAuth,(req,res)=>{
-    console.log(req.session)
     res.send(users);
 });
+//login logic
 app.post('/login',async (req,res)=>{
-    console.log(req.session);
-    console.log(req.sessionID)
     const { username, password} = req.body;
-    if ( username && password){
+    if ( username && password){ 
         if(req.session.authenticated & req.session.user == username){
             res.status(200).json({message:"user is already authenticate"})
         }else{
@@ -74,7 +65,6 @@ app.post('/login',async (req,res)=>{
             req.session.authenticated = true;
             req.session.user = username;
             res.json({message:"User authenticated successfully"})
-            console.log(req.session)
            } else res.status(401).json({message:"Bad credentials"})          
         }
     }else{
