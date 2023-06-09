@@ -91,11 +91,8 @@ function checkUrl(req,res,next){
 
 //midleware to check if user is already login
 function userAuth(req,res,next){
-    if (req.session.authenticated === true & req.session.user === req.body.username) {
-        next()
-    }else{
-        res.status(401).json({message:"user need to login"})
-    }
+    if (req.session.authenticated) next()
+    else res.status(401).json({message:"user need to login"})
 };
 
 
