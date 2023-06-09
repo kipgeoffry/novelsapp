@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(checkUrl);
 app.use(session({
-    secret:"adsfhdfuiyijdsfhjhdshf",
+    secret:process.env.SESSION_SECRET,
     cookie:{ maxAge: 30000},
     resave:false,
     saveUninitialized:false
