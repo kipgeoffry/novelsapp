@@ -2,17 +2,28 @@
 const { render } = require('ejs');
 const express = require('express');
 require('dotenv').config();
-// const ejs = require('ejs');
+const session = require('express-session');
+const mongoose = require('mongoose');
 
 //initialize app
 const app = express();
 
 //import local modules
+const authRouter = require('./routes/auth');
 
 //middlewares
 app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 app.use(checkUrl);
+app.use(session({
+    secret:"adsfhdfuiyijdsfhjhdshf",
+    cookie:{ maxAge: 30000},
+    resave:false,
+    saveUninitialized:false
+}));
+
+app.use("/auth",authRouter);
+
 
 
 
@@ -24,13 +35,68 @@ app.set('view engine', 'ejs')
 app.get('/',(req,res)=>{
     const name = {name:"kigen"}
     res.render('index',{name:name});
-})
+});
+
+const users=[
+    {
+        username:"aron",
+        password:123
+    },
+    {
+        username:"kigen",
+        password:"456"
+    }
+];
+
+// async function getUser(username){
+//     const user = await users.find((user)=>user.username === username);
+//     return user
+// };
+
+// getUser("kigen").then(console.log)
+// // console.log(getUser("kigen"));
+
+app.get('/login',userAuth,(req,res)=>{
+    console.log(req.session)
+    res.send(users);
+});
+app.post('/login',async (req,res)=>{
+    console.log(req.session);
+    console.log(req.sessionID)
+    const { username, password} = req.body;
+    if ( username && password){
+        if(req.session.authenticated & req.session.user == username){
+            res.status(200).json({message:"user is already authenticate"})
+        }else{
+           const user = await users.find((user)=>user.username === username);
+           if (!user) return res.status(404).json({message:"User not Found"})
+           if (user.username === username & user.password === password){
+            req.session.authenticated = true;
+            req.session.user = username;
+            res.json({message:"User authenticated successfully"})
+            console.log(req.session)
+           } else res.status(401).json({message:"Bad credentials"})          
+        }
+    }else{
+        res.status(400).json({message:"username or password required"})
+    }
+   
+});    
 
 //middleware to check url and methods
 function checkUrl(req,res,next){
     console.log(`${req.method}::${req.url}`);
     next();
 }
+
+//midleware to check if user is already login
+function userAuth(req,res,next){
+    if (req.session.authenticated === true & req.session.user === req.body.username) {
+        next()
+    }else{
+        res.status(401).json({message:"user need to login"})
+    }
+};
 
 
 //set app's listening port
