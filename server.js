@@ -56,7 +56,7 @@ app.get('/login',userAuth,(req,res)=>{
 app.post('/login',async (req,res)=>{
     const { username, password} = req.body;
     if ( username && password){ 
-        if(req.session.authenticated & req.session.user == username){
+        if(req.session.authenticated && req.session.user == username){
             res.status(200).json({message:"user is already authenticate"})
         }else{
            const user = await users.find((user)=>user.username === username);
@@ -84,7 +84,6 @@ function userAuth(req,res,next){
     if (req.session.authenticated) next()
     else res.status(401).json({message:"user need to login"})
 };
-
 
 //set app's listening port
 const port = process.env.PORT || 4510;
