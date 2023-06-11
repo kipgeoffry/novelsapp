@@ -1,16 +1,18 @@
 //import dependecy modules
-const { render } = require('ejs');
 const express = require('express');
-require('dotenv').config();
 const session = require('express-session');
 const mongoose = require('mongoose');
-require("./models/connection");
+const passport = require('passport');
+const { render } = require('ejs');
+require('dotenv').config();
+
 
 //initialize app
 const app = express();
 
 //import local modules
 const authRouter = require('./routes/auth');
+require("./models/connection");
 
 //middlewares
 app.use(express.json());
@@ -23,11 +25,11 @@ app.use(session({
     saveUninitialized:false
 }));
 
+//initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use("/auth",authRouter);
-
-
-
-
 //set templating engine
 app.set('view engine', 'ejs')
 
@@ -48,6 +50,7 @@ const users=[
         password:"456"
     }
 ];
+
 
 app.get('/login',userAuth,(req,res)=>{
     res.send(users);

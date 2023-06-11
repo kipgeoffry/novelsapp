@@ -12,7 +12,6 @@ function hashPassword(password){
 
 
 //compare raw and db hashed password
-
 function comparedPassword(rawpass,hashedpass){
     return bcrypt.compareSync(rawpass,hashedpass);
 }
