@@ -7,7 +7,6 @@ const { connect } = require('mongoose');
 //Serialize user
 passport.serializeUser((user, done)=>{
     console.log("serilizing user...")
-    console.log(user)
     done(null, user.id);
 });
 
@@ -17,7 +16,10 @@ passport.deserializeUser(async (id, done)=>{
     try {
         const user = await UserModel.findById(id);
         if (!user) throw new Error('User not found.');
-        done(null,user)
+        done(null,{
+            id:user.id,
+            email:user.email
+        }); //pass the user id and email to the req.user object when deserializing
     } catch (error) {
         console.log(error);
         done(error,false)
@@ -30,26 +32,25 @@ passport.use( new LocalStrategy(
         usernameField: 'email',
     },
     async (email, password, done)=>{
-        try {
         if (!email || !password) throw new Error('Missing credentials:email and pasword required');
+        try {        
         const dbUser = await UserModel.findOne({ email:email });
         // if(!dbUser) throw new Error('Use not found'); 
-        if (!dbUser) throw new Error('User not found.');
+        if (!dbUser) return done(null, false);
         const isValid = comparedPassword(password, dbUser.password );
         if (isValid) {
-            console.log("user authenticated")
-            done(null,dbUser);
+            console.log("user authenticated");
+            return done(null,dbUser);
           } else {
-            console.log("authentication Failed")
+            console.log("authentication Failed");
             // throw new Error('authentication failed.');
-            done(null,false)
+             return done(null,false);
         }
         } catch (err) {
-            console.log(err)
-            done(err,null)
+            console.log(err);
+            done(err,null);
         }
     }
-
 ))
 
 

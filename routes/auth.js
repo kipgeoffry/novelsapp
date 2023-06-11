@@ -31,6 +31,8 @@ router.get("/login",userAuthenticate, async (req, res) => {
 //   } else res.status(400).json({ message: "username or password required" });
 // });
 
+
+//login route using passport
 router.post("/login",passport.authenticate('local'),(req,res)=>{
     console.log('authenticated')
     res.send(req.session)
@@ -55,21 +57,20 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     console.log(error)
     return res.status(500).json({error:error.message});
-
-  }
+    }
 });
 
 //midleware to check if user is already login
-function userAuth(req, res, next) {
-  if (req.session.authenticated && req.session.user == req.body.email) next();
-  else res.status(401).json({ message: "user need to login" });
-}
+// function userAuth(req, res, next) {
+//   if (req.session.authenticated && req.session.user == req.body.email) next();
+//   else res.status(401).json({ message: "user need to login" });
+// }
 
 //middleware to check if user is already authenticated when using passport
 function userAuthenticate(req,res,next){
-    if (req.session.passport) next();
+    if (req.user) next();
     else res.status(401).json({ message: "user need to login" });
+};
 
-}
-
-module.exports = router;
+// module.exports = router
+module.exports = router

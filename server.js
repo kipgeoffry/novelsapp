@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
+const MongoStore = require('connect-mongo');
 const { render } = require('ejs');
 require('dotenv').config();
 
@@ -11,8 +12,10 @@ require('dotenv').config();
 const app = express();
 
 //import local modules
-const authRouter = require('./routes/auth');
 require("./models/connection");
+const authRouter = require('./routes/auth');
+const novelsRouter = require('./routes/novels');
+
 
 //middlewares
 app.use(express.json());
@@ -20,20 +23,26 @@ app.use(express.urlencoded({extended:false}));
 app.use(checkUrl);
 app.use(session({
     secret:process.env.SESSION_SECRET,
-    cookie:{ maxAge: 30000},
+    cookie:{ maxAge: 180000},
     resave:false,
-    saveUninitialized:false
+    saveUninitialized:false,
+    store:MongoStore.create({
+        mongoUrl: process.env.MONGO_URL
+    })
 }));
 
 //initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
 
+//routes to controllers
 app.use("/auth",authRouter);
+app.use("/novels",novelsRouter);
+
+
 //set templating engine
 app.set('view engine', 'ejs')
 
-//routes to controllers
 
 app.get('/',(req,res)=>{
     const name = {name:"kigen"}
@@ -76,17 +85,20 @@ app.post('/login',async (req,res)=>{
    
 });    
 
-//middleware to check url and methods
+//middleware function to check and log url and method for all routes accessed
 function checkUrl(req,res,next){
     console.log(`${req.method}::${req.url}`);
     next();
-}
+};
+
+
 
 //midleware to check if user is already login
 function userAuth(req,res,next){
     if (req.session.authenticated) next()
     else res.status(401).json({message:"user need to login"})
 };
+
 
 //set app's listening port
 const port = process.env.PORT || 4510;

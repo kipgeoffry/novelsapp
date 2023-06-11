@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     createsAt:{
         type:mongoose.Schema.Types.Date,
         require:true,
-        default:Date.now()
+        default:new Date()
     }
 });
 
