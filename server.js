@@ -4,7 +4,6 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const MongoStore = require('connect-mongo');
-const { render } = require('ejs');
 require('dotenv').config();
 
 
