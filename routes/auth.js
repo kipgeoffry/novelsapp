@@ -1,6 +1,6 @@
 const express = require("express");
 const UserModel = require("../models/schemas/users");
-const { hashPassword, comparedPassword } = require("../utils/helpers");
+const { hashPassword } = require("../utils/helpers");
 const passport = require("passport");
 require('../strategies/local')
 
@@ -9,6 +9,9 @@ const router = express.Router();
 
 router.get("/login",userAuthenticate, async (req, res) => {
   const users = await UserModel.find({});
+  console.log(req.session)
+  console.log("============")
+  console.log(req.user)
   res.status(200).json(users);
 });
 
@@ -36,14 +39,25 @@ router.get("/login",userAuthenticate, async (req, res) => {
 router.post("/login",passport.authenticate('local'),(req,res)=>{
     console.log('authenticated')
     res.send(req.session)
-})
+});
+
+//logout route--this removes the req.user object
+router.post('/logout', (req, res, next) => {
+  console.log(req.user)
+  req.logout(err => {
+    if (err)  return next(err); 
+    console.log("User logged out")
+    res.status(200).json({"message":"User logged out"})
+  });
+});
+
 
 //register route
 router.post("/register", async (req, res) => {
   const { email, password } = req.body;
   try {
     if (email && password) {
-      const dbUser = await UserModel.findOne({ email:email }); //check is user exist in DB
+      const dbUser = await UserModel.findOne({ email:email }); //check if user exist in DB
       if (!dbUser) {
         const password = hashPassword(req.body.password);
         const newUser = await UserModel.create({ email, password });
