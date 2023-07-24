@@ -1,11 +1,11 @@
 const express = require('express');
-// const userAuthenticate = require("./auth")
+const { userAuthenticate } = require("./auth")
 
 
 
 const router = express.Router();
 
-//middleware to check if user is loged in.
+//middleware to check if user is loged in when accessing the endpoint /api/novels
 router.use(userAuthenticate);
  
 //get all novels
@@ -26,10 +26,5 @@ router.post("/",(req,res)=>{
 
 //update a novel
 
-//middleware to check if user is already authenticated when using passport
-function userAuthenticate(req,res,next){
-    if (req.user) next();
-    else res.status(401).json({ message: "user need to login" });
-};
 
 module.exports = router;

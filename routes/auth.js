@@ -43,7 +43,6 @@ router.post("/login",passport.authenticate('local'),(req,res)=>{
 
 //logout route--this removes the req.user object
 router.post('/logout', (req, res, next) => {
-  console.log(req.user)
   req.logout(err => {
     if (err)  return next(err); 
     console.log("User logged out")
@@ -54,13 +53,16 @@ router.post('/logout', (req, res, next) => {
 
 //register route
 router.post("/register", async (req, res) => {
-  const { email, password } = req.body;
+  const { fullName,email, password } = req.body;
+  if (email === "" || password === "") {
+    return res.status(401).json({ "errorMessage": "Indicate username and password"});
+  }
   try {
     if (email && password) {
       const dbUser = await UserModel.findOne({ email:email }); //check if user exist in DB
       if (!dbUser) {
         const password = hashPassword(req.body.password);
-        const newUser = await UserModel.create({ email, password });
+        const newUser = await UserModel.create({ fullName, email, password });
         return res.status(201).json({ message: "user added" });
       } else
         return res
@@ -81,10 +83,12 @@ router.post("/register", async (req, res) => {
 // }
 
 //middleware to check if user is already authenticated when using passport
-function userAuthenticate(req,res,next){
+function userAuthenticate(req,res,next) {
     if (req.user) next();
     else res.status(401).json({ message: "user need to login" });
 };
 
-// module.exports = router
-module.exports = router
+module.exports = {
+  router,
+  userAuthenticate
+}

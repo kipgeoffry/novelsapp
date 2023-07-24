@@ -45,14 +45,15 @@ passport.use( new LocalStrategy(
         // if (!email || !password) return res.status(401).json({"error":'Missing credentials:email and pasword required'});
         try {        
         const dbUser = await UserModel.findOne({ email:email });
-        // if(!dbUser) throw new Error('Use not found'); 
-        if (!dbUser) return done(null, false); //returns unauthorized {need to have a cusomized error when user is not found}
+        // if(!dbUser) throw new Error('Use not found');
+        if(!dbUser) console.log(`user with ${email} not found`) 
+        if (!dbUser) return done(null, false,); //returns unauthorized {need to have a cusomized error when user is not found}
         const isValid = comparedPassword(password, dbUser.password ); //returns true if password matches and false if they dont match
         if (isValid) {
             console.log("user authenticated");
-            return done(null,dbUser); //returns the dbuser user object then serializes the user i.e modify the cookie by adding passport object
+            return done(null,dbUser); //returns the dbuser user object then serializes the user i.e modify the session by adding a passport object
           } else {
-            console.log("authentication Failed");
+            console.log("authentication Failed,Incorrect password");
             return done(null,false); //returns unauthorized {need to customize the error}
         }
         } catch (err) {

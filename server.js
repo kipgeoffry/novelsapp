@@ -12,8 +12,9 @@ const app = express();
 
 //import local modules
 require("./models/connection");
-const authRouter = require('./routes/auth');
+const auth = require('./routes/auth');
 const novelsRouter = require('./routes/novels');
+const booksRouter = require('./routes/books')
 
 
 //middlewares
@@ -22,7 +23,7 @@ app.use(express.urlencoded({extended:false}));
 app.use(checkUrl);
 app.use(session({
     secret:process.env.SESSION_SECRET,
-    cookie:{ maxAge: 180000},
+    cookie:{ maxAge: 1800000}, 
     resave:false,
     saveUninitialized:false,
     store:MongoStore.create({
@@ -35,12 +36,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //routes to controllers
-app.use("/api/auth",authRouter);
+app.use("/api/auth",auth.router);
 app.use("/api/novels",novelsRouter);
-
-
-//set templating engine
-// app.set('view engine', 'ejs')
+app.use("/api/books",booksRouter);
 
 //middleware function to check and log url and method for all routes accessed
 function checkUrl(req,res,next){
