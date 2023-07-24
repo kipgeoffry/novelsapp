@@ -7,8 +7,6 @@ const router = express.Router();
 
 //middleware to check if user is loged in when accessing the endpoint /api/books/
 router.use(userAuthenticate);
- 
-
 
 //add a book
 router.post("/add",async (req,res)=>{
@@ -51,15 +49,10 @@ router.patch("/update/:id", async (req,res) => {
     const book = req.body;
     try {
         const updateBook = await Book.findOneAndUpdate({_id: id}, book, { new: true }) //(filter,update,options)
-        // if(!updateBook) return res.status(404).json({"message":`Book not found/updated`})
         res.status(200).json({"message":"Book updated"})
     } catch (error) {
         res.status(400).json({"error":error.name,"message":error.message})
     }
-   
-    
-
-
 });
 
 //delete book
@@ -72,7 +65,6 @@ router.delete("/delete/:id", async (req,res)=>{
     } catch (error) {
         res.status(400).json({"error":error.name,"message":error.message})
     }
-})
-
+});
 
 module.exports = router
