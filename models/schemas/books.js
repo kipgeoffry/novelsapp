@@ -6,7 +6,7 @@ const bookSchema = new mongoose.Schema({
         require:true
     },
     author:{
-        type:mongoose.Schema.Types.Mixed,
+        type:mongoose.Schema.Types.String,
         require:true
     },
     category:{
