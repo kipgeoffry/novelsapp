@@ -5,7 +5,7 @@ const Book = require("../models/schemas/books");
 
 const router = express.Router();
 
-//middleware to check if user is loged in when accessing the endpoint /api/books/
+//middleware to check if user is loged in when accessing the endpoint /api/books/(protecting routes)
 router.use(userAuthenticate);
 
 //add a book

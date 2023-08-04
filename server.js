@@ -47,9 +47,9 @@ function checkUrl(req,res,next){
 };
 
 //set app's listening port
-const port = process.env.PORT || 4510;
+const PORT = process.env.PORT || 4510;
 
 //start application
-app.listen(port,()=>console.log(`Server is running and listening on ${port}`))
+app.listen(PORT,()=>console.log(`Server is running and listening on ${PORT}`))
 
 
