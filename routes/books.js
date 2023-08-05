@@ -48,12 +48,11 @@ router.get("/search", validate(booksValidaion.getBooks, 'query'), async(req, res
 });
 
 //get a book by id
-router.get("/:id", async (req,res)=>{
-    console.log(1)
+router.get("/:id",validate(booksValidaion.getBook, 'params') ,async (req,res)=>{
     const { id } = req.params
     try {
         const getBook = await Book.findById(id)
-        if(!getBook) return res.status(404).json({"message":`Book with ${id} not found`})
+        if(!getBook) return res.status(404).json({"message":`Book with id ${id} not found`})
         res.status(200).send(getBook)
     } catch (error) {
         res.status(400).json({"error":error.name,"message":error.message})
@@ -61,7 +60,7 @@ router.get("/:id", async (req,res)=>{
 });
 
 //update book details
-router.patch("/update/:id", async (req,res) => {
+router.patch("/update/:id",validate(booksValidaion.updateBook.params, 'params'),validate(booksValidaion.updateBook.body, 'body'),async (req,res) => {
     const { id } = req.params;
     const book = req.body;
     try {
@@ -73,7 +72,7 @@ router.patch("/update/:id", async (req,res) => {
 });
 
 //delete book
-router.delete("/delete/:id", async (req,res)=>{
+router.delete("/delete/:id", validate(booksValidaion.deleteBook, 'params'), async (req,res)=>{
     const { id } = req.params
     try {
         const getBook = await Book.findByIdAndDelete(id)

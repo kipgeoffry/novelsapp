@@ -9,7 +9,7 @@ const validate = (schema, property) => {
         const valid = error == null;
         if (!valid){
             const errorMessage = error.details.map((details) => details.message).join(', ');
-            console.log("error", errorMessage); 
+            console.log("error::", errorMessage); 
             return res.status(422).json({error: errorMessage})
         };
         console.log("Book validated successfully")
