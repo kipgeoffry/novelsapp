@@ -11,9 +11,8 @@ require('dotenv').config();
 const app = express();
 
 //import local modules
-require("./models/connection");
+require("./config/dbConnection");
 const auth = require('./routes/auth');
-const novelsRouter = require('./routes/novels');
 const booksRouter = require('./routes/books')
 
 
@@ -37,7 +36,6 @@ app.use(passport.session());
 
 //routes to controllers
 app.use("/api/auth",auth.router);
-app.use("/api/novels",novelsRouter);
 app.use("/api/books",booksRouter);
 
 //middleware function to check and log url and method for all routes accessed
