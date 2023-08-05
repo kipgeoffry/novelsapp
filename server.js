@@ -1,7 +1,6 @@
 //import dependecy modules
 const express = require('express');
 const session = require('express-session');
-const mongoose = require('mongoose');
 const passport = require('passport');
 const MongoStore = require('connect-mongo');
 require('dotenv').config();
@@ -12,7 +11,7 @@ const app = express();
 
 //import local modules
 require("./config/dbConnection");
-const auth = require('./routes/auth');
+const authRouter = require('./routes/auth');
 const booksRouter = require('./routes/books')
 
 
@@ -35,7 +34,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //routes to controllers
-app.use("/api/auth",auth.router);
+app.use("/api/auth",authRouter);
 app.use("/api/books",booksRouter);
 
 //middleware function to check and log url and method for all routes accessed

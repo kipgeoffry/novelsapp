@@ -7,7 +7,7 @@ const { connect } = require('mongoose');
 //Serialize user -modify the session object by adding an object(passport) (taking dbUser object when succesfully logs in from local startegy)
 passport.serializeUser((user, done)=>{
     console.log("serilizing user...")
-    // add an object(passport) to the Session.Object contains User's username,password and authenticated=true.
+    // add an object(passport) to the Session Object contains User's username,id and authenticated=true flag.
     done(null,  {username:user.email,
         userId:user.id,
         // authenticated:true
@@ -40,14 +40,14 @@ passport.use( new LocalStrategy(
         passwordField: 'password'
     },
     async (email, password, done)=>{
-        // returns bad request if there is no username of password field in te body{validate this in front end before sending to backend}
+        // returns bad request if there is no username or password field in the body{validate this in front end before sending to backend}
         // if (!email || !password) throw new Error('Missing credentials:email and pasword required');
         // if (!email || !password) return res.status(401).json({"error":'Missing credentials:email and pasword required'});
         try {        
         const dbUser = await UserModel.findOne({ email:email });
         // if(!dbUser) throw new Error('Use not found');
         if(!dbUser) console.log(`user with ${email} not found`) 
-        if (!dbUser) return done(null, false,); //returns unauthorized {need to have a cusomized error when user is not found}
+        if (!dbUser) return done(null, false,); //returns unauthorized {need to have a cutsomized error when user is not found}
         const isValid = comparedPassword(password, dbUser.password ); //returns true if password matches and false if they dont match
         if (isValid) {
             console.log("user authenticated");

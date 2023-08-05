@@ -1,5 +1,5 @@
 const express = require('express');
-const { userAuthenticate } = require("./auth");
+const { userAuthenticate } = require("../middlewares/auth.passport");
 const validate = require('../middlewares/validate')
 const booksValidaion = require('../validations/books.validation');
 const booksController = require('../controllers/books.controller');

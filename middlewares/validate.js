@@ -12,7 +12,7 @@ const validate = (schema, property) => {
             console.log("error::", errorMessage); 
             return res.status(422).json({error: errorMessage})
         };
-        console.log("Book validated successfully")
+        console.log("Input data Validated successfully")
         next();
     };
 };

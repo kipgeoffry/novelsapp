@@ -19,7 +19,6 @@ const addBook = async (req,res)=>{
 //@route GET /api/books/all
 //@access private
 const getAllBooks = async (req,res)=>{
-    console.log("books")
     try {
         const getBooks = await Book.find({})
         res.status(200).send(getBooks)
@@ -27,7 +26,6 @@ const getAllBooks = async (req,res)=>{
         res.status(400).json({"error":error.name,"message":error.message})
     }
 };
-
 
 //@desc get books by author
 //@route GET /api/books/search

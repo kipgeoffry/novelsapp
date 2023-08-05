@@ -1,21 +1,35 @@
 const express = require("express");
-const UserModel = require("../models/schemas/users");
-const { hashPassword } = require("../utils/helpers");
 const passport = require("passport");
-require('../strategies/local')
-
+const validate = require('../middlewares/validate');
+const authValidation = require('../validations/auth.validation');
+const authController = require('../controllers/auth.controllers');
+require('../strategies/local');
 
 const router = express.Router();
 
-router.get("/login",userAuthenticate, async (req, res) => {
-  const users = await UserModel.find({});
-  console.log(req.session)
-  console.log("============")
-  console.log(req.user)
-  res.status(200).json(users);
+
+//@desc login route using passport
+//@route  POST /api/auth/login
+//@access public
+router.post("/login",validate(authValidation.login, 'body'),passport.authenticate('local'),(req,res)=>{
+    console.log('authenticated')
+    res.status(200).send(req.session)
 });
 
-//logging in route
+//@desc logout route--this removes the req.user object
+//@route POST /api/auth/logout
+//@access public
+router.post('/logout',authController.logout );
+
+//@desc registering a user route
+//@route POST /api/auth/register
+//@access public
+router.post("/register", validate(authValidation.register, 'body'), authController.register);
+
+
+//BELOW CODE Implementation without Passport
+
+//logging in route without using passport
 // router.post("/login", async (req, res) => {
 //   const { email, password } = req.body;
 //   if (email && password) {
@@ -34,61 +48,10 @@ router.get("/login",userAuthenticate, async (req, res) => {
 //   } else res.status(400).json({ message: "username or password required" });
 // });
 
-
-//login route using passport
-router.post("/login",passport.authenticate('local'),(req,res)=>{
-    console.log('authenticated')
-    res.send(req.session)
-});
-
-//logout route--this removes the req.user object
-router.post('/logout', (req, res, next) => {
-  req.logout(err => {
-    if (err)  return next(err); 
-    console.log("User logged out")
-    res.status(200).json({"message":"User logged out"})
-  });
-});
-
-
-//register route
-router.post("/register", async (req, res) => {
-  const { fullName,email, password } = req.body;
-  if (email === "" || password === "") {
-    return res.status(401).json({ "errorMessage": "Indicate username and password"});
-  }
-  try {
-    if (email && password) {
-      const dbUser = await UserModel.findOne({ email:email }); //check if user exist in DB
-      if (!dbUser) {
-        const password = hashPassword(req.body.password);
-        const newUser = await UserModel.create({ fullName, email, password });
-        return res.status(201).json({ message: "user added" });
-      } else
-        return res
-          .status(400)
-          .json({ message: `User with email ${email} already exist` });
-    } else
-      return res.status(400).json({ message: "email and password required" });
-  } catch (error) {
-    console.log(error)
-    return res.status(500).json({error:error.message});
-    }
-});
-
 //midleware to check if user is already login
 // function userAuth(req, res, next) {
 //   if (req.session.authenticated && req.session.user == req.body.email) next();
 //   else res.status(401).json({ message: "user need to login" });
 // }
 
-//middleware to check if user is already authenticated when using passport
-function userAuthenticate(req,res,next) {
-    if (req.user) next();
-    else res.status(401).json({ message: "user need to login" });
-};
-
-module.exports = {
-  router,
-  userAuthenticate
-}
+module.exports = router
