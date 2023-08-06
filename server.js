@@ -6,14 +6,14 @@ const MongoStore = require('connect-mongo');
 require('dotenv').config();
 
 
-//initialize app
-const app = express();
-
 //import local modules
 require("./config/dbConnection");
 const authRouter = require('./routes/auth');
-const booksRouter = require('./routes/books')
+const booksRouter = require('./routes/books');
+const { errorConverter, errorHandler } = require('./middlewares/error');
 
+//initialize app
+const app = express();
 
 //middlewares
 app.use(express.json());
@@ -29,6 +29,7 @@ app.use(session({
     })
 }));
 
+
 //initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -36,6 +37,10 @@ app.use(passport.session());
 //routes to controllers
 app.use("/api/auth",authRouter);
 app.use("/api/books",booksRouter);
+
+//middleerror Handlerrrors
+app.use(errorConverter);
+app.use(errorHandler);
 
 //middleware function to check and log url and method for all routes accessed
 function checkUrl(req,res,next){
