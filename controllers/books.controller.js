@@ -12,7 +12,12 @@ const addBook = async (req,res, next)=>{
         const checkBook = await Book.find({ title: book.title });
         if(checkBook.length > 0) return res.status(401).json({"message":"Book already exist "});
         const newBook = await Book.create(book);
-        res.status(201).json({"message":"Book added succesfuuly"})         
+        res.status(201).json({
+            "statusCode":201,
+            "successMessage":"Book added successfully",
+            "errorMessage":null,
+            "data":null
+        })         
     }catch (error) {
         // res.status(400).json({"error":error.name,"message":error.message})
         next(error)
@@ -25,7 +30,12 @@ const addBook = async (req,res, next)=>{
 const getAllBooks = async (req,res,next)=>{
     try {
         const getBooks = await Book.find({})
-        res.status(200).send(getBooks)
+        res.status(200).json({
+            "statusCode":httpStatus.OK,
+            "successMessage":"fetch books success",
+            "errorMessage":null,
+            "data":getBooks
+        })
     } catch (error) {
         // res.status(400).json({"error":error.name,"message":error.message})
         next(error)
@@ -40,7 +50,12 @@ const getBooks = catchAsync(async(req, res, next)=>{
     const book = await Book.findOne({author});
     // if(!book) return res.status(404).json({message:"Book not found"})
     if(!book) throw new ApiError(httpStatus.NOT_FOUND, `No books by author: ${author} found`);
-    res.status(200).send(book);
+    res.status(200).json({
+        "statusCode":httpStatus.OK,
+        "successMessage":"feth book success",
+        "errorMessage":null,
+        "data":book
+    });
     });
 
 
@@ -52,7 +67,12 @@ const getBook = catchAsync(async (req,res,next)=>{
     const getBook = await Book.findById(id)
     // if(!getBook) return res.status(404).json({"message":`Book with id ${id} not found`})
     if(!getBook) throw new ApiError(httpStatus.NOT_FOUND, `Book with id ${id} not found`)
-    res.status(200).send(getBook)
+    res.status(200).json({
+        "statusCode":httpStatus.OK,
+        "successMessage":"fetch book success",
+        "errorMessage":null,
+        "data":getBook
+    })
 });
 
 //@desc update book handler
@@ -63,7 +83,12 @@ const updateBook = catchAsync(async (req,res) => {
     const book = req.body;
     const updateBook = await Book.findOneAndUpdate({_id: id}, book, { new: true }) //(filter,update,options)
     if(!updateBook) throw new ApiError(httpStatus.NOT_FOUND, "Book not found");
-    res.status(200).json({"message":"Book updated successfully"})
+    res.status(200).json({
+        "statusCode":httpStatus.OK,
+        "successMessage":"book updated successfully",
+        "errorMessage":null,
+        "data":null
+    })
 });
 
 
@@ -75,7 +100,12 @@ const deleteBook = catchAsync(async (req,res,next)=>{
     const getBook = await Book.findByIdAndDelete(id)
     // if(!getBook) return res.status(404).json({"message":`Book not found`})
     if(!getBook) throw new ApiError(httpStatus.NOT_FOUND, `Book not found`)
-    res.status(200).json({"message":"Book deleted sucessfully"})
+    res.status(200).json({
+        "statusCode":httpStatus.OK,
+        "successMessage":"book deleted successfully",
+        "errorMessage":null,
+        "data":null
+    })
 });
 
 

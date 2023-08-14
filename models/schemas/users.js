@@ -34,5 +34,5 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model("User",userSchema)
+module.exports = mongoose.model("User",userSchema)  //model is singular and mongoose collection will be plural.
 

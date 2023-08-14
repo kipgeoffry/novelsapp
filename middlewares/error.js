@@ -25,8 +25,10 @@ const errorHandler = (err, req, res, next) => {
             message = httpStatus[httpStatus.INTERNAL_SERVER_ERROR];
         }
         const response = {
-          code: statusCode,
-          message:message,
+          StatusCode: statusCode,
+          successMessage:null,
+          errorMessage:message,
+          data:null,
           ...(process.env.DEPLOY_ENV === "dev" && { stackTrace: err.stack }), //if environmentis dev,show the stacktrace
         };
 

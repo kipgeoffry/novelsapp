@@ -1,7 +1,7 @@
 const express = require('express');
 const { userAuthenticate } = require("../middlewares/auth.passport");
 const validate = require('../middlewares/validate')
-const booksValidaion = require('../validations/books.validation');
+const booksValidation = require('../validations/books.validation');
 const booksController = require('../controllers/books.controller');
 
 
@@ -11,22 +11,22 @@ const router = express.Router();
 router.use(userAuthenticate);
 
 //add a book route
-router.post("/add", validate(booksValidaion.addBook, 'body') ,booksController.addBook);
+router.post("/add", validate(booksValidation.addBook, 'body') ,booksController.addBook);
 
 //get all books route
 router.get("/all",booksController.getAllBooks);
 
 //get a book by author route
-router.get("/search", validate(booksValidaion.getBooks, 'query'), booksController.getBooks);
+router.get("/search", validate(booksValidation.getBooks, 'query'), booksController.getBooks);
 
 //get a book by id
-router.get("/:id",validate(booksValidaion.getBook, 'params') ,booksController.getBook);
+router.get("/:id",validate(booksValidation.getBook, 'params') ,booksController.getBook);
 
 //update book details
-router.patch("/update/:id",validate(booksValidaion.updateBook.params, 'params'),validate(booksValidaion.updateBook.body, 'body'), booksController.updateBook);
+router.patch("/update/:id",validate(booksValidation.updateBook.params, 'params'),validate(booksValidation.updateBook.body, 'body'), booksController.updateBook);
 
 //delete book
-router.delete("/delete/:id", validate(booksValidaion.deleteBook, 'params'), booksController.deleteBook);
+router.delete("/delete/:id", validate(booksValidation.deleteBook, 'params'), booksController.deleteBook);
 
 
 module.exports = router

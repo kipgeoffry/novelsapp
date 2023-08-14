@@ -15,7 +15,7 @@ const register = async (req, res) => {
         } else
           return res
             .status(400)
-            .json({ message: `email ${email} already taken` });
+            .json({ message: `Email ${email} is already taken` });
       }
      catch (error) {
       console.log(error)
