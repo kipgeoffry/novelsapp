@@ -1,25 +1,36 @@
 const UserModel = require("../models/schemas/users");
 const { hashPassword } = require("../utils/helpers");
+const httpStatus = require("http-status");
 
 //@desc registering a user route
 //@route POST /api/auth/register
 //@access public
-const register = async (req, res) => {
+const register = async (req, res, next) => {
     const { fullName,email } = req.body;
      try {
         const dbUser = await UserModel.findOne({ email:email }); //check if email exist in DB i.e taken
         if (!dbUser) {
           const password = hashPassword(req.body.password);
           const newUser = await UserModel.create({ fullName, email, password });
-          return res.status(201).json({ message: "user added" });
+          return res.status(201).json({
+              "statusCode":httpStatus.CREATED,
+              "successMessage":"user created successfully",
+              "errorMessage":null,
+              "data":dbUser
+           });
         } else
           return res
             .status(400)
-            .json({ message: `Email ${email} is already taken` });
+            .json({ 
+              "statusCode":httpStatus.BAD_REQUEST,
+              "successMessage":null,
+              "errorMessage":"email is already taken",
+              "data":null
+             });
       }
      catch (error) {
       console.log(error)
-      return res.status(500).json({error:error.message});
+      next(error)
       }
   };
 
@@ -30,7 +41,12 @@ const register = async (req, res) => {
     req.logout(err => {
       if (err)  return next(err); 
       console.log("User logged out")
-      res.status(200).json({"message":"User logged out"})
+      res.status(200).json({
+        "statusCode":httpStatus.OK,
+        "successMessage":"logged out successfully",
+        "errorMessage":null,
+        "data":null
+      })
     });
   };
 

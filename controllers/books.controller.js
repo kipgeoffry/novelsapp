@@ -49,7 +49,7 @@ const getBooks = catchAsync(async(req, res, next)=>{
     const { author } = req.query;
     const book = await Book.findOne({author});
     // if(!book) return res.status(404).json({message:"Book not found"})
-    if(!book) throw new ApiError(httpStatus.NOT_FOUND, `No books by author: ${author} found`);
+    if(!book) throw new ApiError(httpStatus.NOT_FOUND, `No books by author ${author} found`);
     res.status(200).json({
         "statusCode":httpStatus.OK,
         "successMessage":"feth book success",
