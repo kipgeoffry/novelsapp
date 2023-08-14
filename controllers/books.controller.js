@@ -10,7 +10,8 @@ const addBook = async (req,res, next)=>{
     const book = req.body;
     try{
         const checkBook = await Book.find({ title: book.title });
-        if(checkBook.length > 0) return res.status(401).json({"message":"Book already exist "});
+        // if(checkBook.length > 0) return res.status(401).json({"message":"Book already exist "});
+        if(checkBook.length > 0) throw new ApiError(httpStatus.BAD_REQUEST, "book already exist");
         const newBook = await Book.create(book);
         res.status(201).json({
             "statusCode":201,
@@ -66,7 +67,7 @@ const getBook = catchAsync(async (req,res,next)=>{
     const { id } = req.params
     const getBook = await Book.findById(id)
     // if(!getBook) return res.status(404).json({"message":`Book with id ${id} not found`})
-    if(!getBook) throw new ApiError(httpStatus.NOT_FOUND, `Book with id ${id} not found`)
+    if(!getBook) throw new ApiError(httpStatus.NOT_FOUND, `book with id ${id} not found`)
     res.status(200).json({
         "statusCode":httpStatus.OK,
         "successMessage":"fetch book success",
@@ -82,7 +83,7 @@ const updateBook = catchAsync(async (req,res) => {
     const { id } = req.params;
     const book = req.body;
     const updateBook = await Book.findOneAndUpdate({_id: id}, book, { new: true }) //(filter,update,options)
-    if(!updateBook) throw new ApiError(httpStatus.NOT_FOUND, "Book not found");
+    if(!updateBook) throw new ApiError(httpStatus.NOT_FOUND, "book not found");
     res.status(200).json({
         "statusCode":httpStatus.OK,
         "successMessage":"book updated successfully",
@@ -99,7 +100,7 @@ const deleteBook = catchAsync(async (req,res,next)=>{
     const { id } = req.params
     const getBook = await Book.findByIdAndDelete(id)
     // if(!getBook) return res.status(404).json({"message":`Book not found`})
-    if(!getBook) throw new ApiError(httpStatus.NOT_FOUND, `Book not found`)
+    if(!getBook) throw new ApiError(httpStatus.NOT_FOUND, `book not found`)
     res.status(200).json({
         "statusCode":httpStatus.OK,
         "successMessage":"book deleted successfully",

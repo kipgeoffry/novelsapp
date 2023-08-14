@@ -3,6 +3,7 @@ const passport = require("passport");
 const validate = require('../middlewares/validate');
 const authValidation = require('../validations/auth.validation');
 const authController = require('../controllers/auth.controllers');
+const httpStatus = require('http-status');
 require('../strategies/local');
 
 const router = express.Router();
@@ -12,8 +13,12 @@ const router = express.Router();
 //@route  POST /api/auth/login
 //@access public
 router.post("/login",validate(authValidation.login, 'body'),passport.authenticate('local'),(req,res)=>{
-    console.log('authenticated')
-    res.status(200).send(req.session)
+    res.status(200).json({
+        "statusCode":httpStatus.OK,
+        "successMessage":"user authenticated successfully",
+        "errorMessage":null,
+        "data":null
+    })
 });
 
 //@desc logout route--this removes the req.user object
