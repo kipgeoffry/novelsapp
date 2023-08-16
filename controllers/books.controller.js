@@ -53,7 +53,7 @@ const getBooks = catchAsync(async(req, res, next)=>{
     if(!book) throw new ApiError(httpStatus.NOT_FOUND, `No books by author ${author} found`);
     res.status(200).json({
         "statusCode":httpStatus.OK,
-        "successMessage":"feth book success",
+        "successMessage":"fetch book success",
         "errorMessage":null,
         "data":book
     });
@@ -72,7 +72,7 @@ const getBook = catchAsync(async (req,res,next)=>{
         "statusCode":httpStatus.OK,
         "successMessage":"fetch book success",
         "errorMessage":null,
-        "data":getBook
+        "data":getBooks
     })
 });
 
@@ -108,8 +108,6 @@ const deleteBook = catchAsync(async (req,res,next)=>{
         "data":null
     })
 });
-
-
 
 module.exports = {
     addBook,getAllBooks,getBooks,getBook,updateBook,deleteBook

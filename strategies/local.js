@@ -7,9 +7,10 @@ const { USE_PROXY } = require('http-status');
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
 
-//Serialize user -modify the session object by adding an object(passport) (taking dbUser object when succesfully logs in from local startegy)
+//Serialize user -modify the session object by adding an object(passport) (taking use object when succesfully logs in from local startegy)
 passport.serializeUser((user, done)=>{
-    console.log("serilizing user...")
+    console.log("Serilizing user...")
+    //adds user object to the request object i.e req.user
     // add an object(passport) to the Session Object contains User's username,id and authenticated=true flag.
     done(null,  {
         username:user.email,
@@ -20,7 +21,7 @@ passport.serializeUser((user, done)=>{
 });
 
 //deserialize user by taking the object Passport.user object from the session
-//the paramater user is the object passport.user picked from the session object
+//the paramater user is the object passport.user picked from the req.session object
 passport.deserializeUser(async (user, done)=>{ 
     console.log("Deserializing user...")
     const id = user.userId;
@@ -51,15 +52,20 @@ passport.use( new LocalStrategy(
         // if (!email || !password) return res.status(401).json({"error":'Missing credentials:email and pasword required'});
         try {        
         const dbUser = await UserModel.findOne({ email:email });
-        if(!dbUser) throw new ApiError(httpStatus.NOT_FOUND, 'user not found');
+        if(!dbUser) throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
         // if(!dbUser) console.log(`user with ${email} not found`) 
         // if (!dbUser) return done(null, false, { message:"user not found" }); //returns unauthorized {need to have a cutsomized error when user is not found}
         const isValid = comparedPassword(password, dbUser.password ); //returns true if password matches and false if they dont match
         if (isValid) {
-            console.log("user authenticated");
-            return done(null,dbUser); //returns the dbuser user object then serializes the user i.e modify the session by adding a passport object
+            console.log("++++++user authenticated by Passport+++++++");
+            const user = {
+                id:dbUser.id,
+                email:dbUser.email,
+                name:dbUser.fullName
+            }
+            return done(null,user); //returns the dbuser user object then serializes starts(passes to the serilization module) 
           } else {
-            console.log("authentication Failed,Incorrect password");
+            console.log("Authentication Failed,Incorrect password");
             throw new ApiError(httpStatus.UNAUTHORIZED, 'Login Failed!,Invalid password');
             // return done(null,false, { message: "Login Failed!,Invalid password" }); //returns unauthorized {need to customize the error}
         }

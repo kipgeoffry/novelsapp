@@ -13,11 +13,12 @@ const router = express.Router();
 //@route  POST /api/auth/login
 //@access public
 router.post("/login",validate(authValidation.login, 'body'),passport.authenticate('local'),(req,res)=>{
+    console.log("-----login controller after user serialization-----");
     res.status(200).json({
         "statusCode":httpStatus.OK,
         "successMessage":"user authenticated successfully",
         "errorMessage":null,
-        "data":null
+        "data":req.user
     })
 });
 
