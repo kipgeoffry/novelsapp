@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const { comparedPassword } = require('../utils/helpers');
-const UserModel = require('../../models/schemas/users');
+const UserModel = require('../models/users');
 const { connect } = require('mongoose');
 const { USE_PROXY } = require('http-status');
 const ApiError = require('../utils/ApiError');

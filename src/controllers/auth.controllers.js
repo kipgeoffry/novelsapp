@@ -1,4 +1,4 @@
-const UserModel = require("../models/schemas/users");
+const UserModel = require("../models/users");
 const { hashPassword } = require("../utils/helpers");
 const httpStatus = require("http-status");
 

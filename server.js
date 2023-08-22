@@ -7,10 +7,10 @@ require('dotenv').config();
 
 
 //import local modules
-require("./config/dbConnection");
-const authRouter = require('./routes/auth');
-const booksRouter = require('./routes/books');
-const { errorConverter, errorHandler } = require('./middlewares/error');
+require("./src/config/dbConnection");
+const authRouter = require('./src/routes/auth');
+const booksRouter = require('./src/routes/books');
+const { errorConverter, errorHandler } = require('./src/middlewares/error');
 
 //initialize app
 const app = express();

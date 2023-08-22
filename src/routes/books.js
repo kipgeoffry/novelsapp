@@ -1,7 +1,7 @@
 const express = require('express');
 const { userAuthenticate } = require("../middlewares/auth.passport");
 const validate = require('../middlewares/validate')
-const booksValidation = require('../validations/books.validation');
+const booksValidation = require('../middlewares/validate');
 const booksController = require('../controllers/books.controller');
 
 
@@ -23,7 +23,7 @@ router.get("/search", validate(booksValidation.getBooks, 'query'), booksControll
 router.get("/:id",validate(booksValidation.getBook, 'params') ,booksController.getBook);
 
 //update book details
-router.patch("/update/:id",validate(booksValidation.updateBook.params, 'params'),validate(booksValidation.updateBook.body, 'body'), booksController.updateBook);
+router.patch("/update/:id",validate(booksValidation.updateBook, 'params'),validate(booksValidation.updateBook, 'body'), booksController.updateBook);
 
 //delete book
 router.delete("/delete/:id", validate(booksValidation.deleteBook, 'params'), booksController.deleteBook);
