@@ -1,13 +1,14 @@
 //import dependecy modules
 const express = require('express');
+const mongoose = require("mongoose");
 const session = require('express-session');
 const passport = require('passport');
 const MongoStore = require('connect-mongo');
+const logger = require("./src/config/logger");
 require('dotenv').config();
 
 
-//import local modules
-require("./src/config/dbConnection");
+// //import local modules
 const authRouter = require('./src/routes/auth');
 const booksRouter = require('./src/routes/books');
 const { errorConverter, errorHandler } = require('./src/middlewares/error');
@@ -48,11 +49,19 @@ function checkUrl(req,res,next){
     next();
 };
 
-//set app's listening port
 const PORT = process.env.PORT || 4510;
 
-//start application
-app.listen(PORT,()=>console.log(`Server is running and listening on ${PORT}`))
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => {
+    logger.info("Database connection established");
+    //start application
+    app.listen(PORT, () =>
+      logger.info(`Application is running and listening on port ${PORT}`)
+    );
+  })
+  .catch((error) => logger.error("Database connection failed ", error));
 
+module.exports = app;
 
 
