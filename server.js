@@ -5,6 +5,8 @@ const session = require('express-session');
 const passport = require('passport');
 const MongoStore = require('connect-mongo');
 const logger = require("./src/config/logger");
+const ApiError = require("./src/utils/ApiError");
+const httpStatus = require("http-status");
 require('dotenv').config();
 
 
@@ -39,15 +41,23 @@ app.use(passport.session());
 app.use("/api/auth",authRouter);
 app.use("/api/books",booksRouter);
 
+//send 404 for any unknown api requests
+app.use((req, res, next)=>{
+  logger.info(`endpoint not found => ${req.method}: ${req.url} `)
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'))});
+
 //middleware error Handlerrrors
 app.use(errorConverter);
 app.use(errorHandler);
 
-//middleware function to check and log url and method for all routes accessed
+// middleware function to check and log url and method for all routes accessed
 function checkUrl(req,res,next){
-    console.log(`${req.method}::${req.url}`);
+    logger.info(`Api call=> ${req.method}: ${req.url}`);
     next();
 };
+
+
+
 
 const PORT = process.env.PORT || 4510;
 

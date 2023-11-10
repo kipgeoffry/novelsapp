@@ -6,10 +6,11 @@ const { connect } = require('mongoose');
 const { USE_PROXY } = require('http-status');
 const ApiError = require('../utils/ApiError');
 const httpStatus = require('http-status');
+const logger = require('../config/logger');
 
 //Serialize user -modify the session object by adding an object(passport) (taking use object when succesfully logs in from local startegy)
 passport.serializeUser((user, done)=>{
-    console.log("Serilizing user...")
+    logger.info("Serilizing user...")
     //adds user object to the request object i.e req.user
     // add an object(passport) to the Session Object contains User's username,id and authenticated=true flag.
     done(null,  {
@@ -23,7 +24,7 @@ passport.serializeUser((user, done)=>{
 //deserialize user by taking the object Passport.user object from the session
 //the paramater user is the object passport.user picked from the req.session object
 passport.deserializeUser(async (user, done)=>{ 
-    console.log("Deserializing user...")
+    logger.info("Deserializing user...")
     const id = user.userId;
     try {
         const user = await UserModel.findById(id);
@@ -34,7 +35,7 @@ passport.deserializeUser(async (user, done)=>{
             email:user.email
         }); //pass the user id and email to the req.user object when deserializing
     } catch (error) {
-        console.log(error);
+        logger.info(error.message);
         done(error)
     }
   });
@@ -57,7 +58,7 @@ passport.use( new LocalStrategy(
         // if (!dbUser) return done(null, false, { message:"user not found" }); //returns unauthorized {need to have a cutsomized error when user is not found}
         const isValid = comparedPassword(password, dbUser.password ); //returns true if password matches and false if they dont match
         if (isValid) {
-            console.log("++++++user authenticated by Passport+++++++");
+            logger.info("user authenticated by passport");
             const user = {
                 id:dbUser.id,
                 email:dbUser.email,
@@ -65,12 +66,11 @@ passport.use( new LocalStrategy(
             }
             return done(null,user); //returns the dbuser user object then serializes starts(passes to the serilization module) 
           } else {
-            console.log("Authentication Failed,Incorrect password");
-            throw new ApiError(httpStatus.UNAUTHORIZED, 'Login Failed!,Invalid password');
+                 throw new ApiError(httpStatus.UNAUTHORIZED, 'Login failed!,invalid password');
             // return done(null,false, { message: "Login Failed!,Invalid password" }); //returns unauthorized {need to customize the error}
         }
         } catch (err) {
-            console.log(err);
+           logger.info(err.message);
             done(err);
         }
     }

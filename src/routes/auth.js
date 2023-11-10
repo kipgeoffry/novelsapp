@@ -4,6 +4,7 @@ const validate = require('../middlewares/validate');
 const authValidation = require('../validations/auth.validation');
 const authController = require('../controllers/auth.controllers');
 const httpStatus = require('http-status');
+const logger = require('../config/logger');
 require('../strategies/local');
 
 const router = express.Router();
@@ -13,7 +14,7 @@ const router = express.Router();
 //@route  POST /api/auth/login
 //@access public
 router.post("/login",validate(authValidation.login, 'body'),passport.authenticate('local'),(req,res)=>{
-    console.log("-----login controller after user serialization-----");
+    logger.info("** login controller after user serialization **");
     res.status(200).json({
         "statusCode":httpStatus.OK,
         "successMessage":"user authenticated successfully",
@@ -32,32 +33,5 @@ router.post('/logout',authController.logout );
 //@access public
 router.post("/register", validate(authValidation.register, 'body'), authController.register);
 
-
-//BELOW CODE Implementation without Passport
-
-//logging in route without using passport
-// router.post("/login", async (req, res) => {
-//   const { email, password } = req.body;
-//   if (email && password) {
-//     if (req.session.authenticated && req.session.user == email) {
-//       return res.status(200).json({ message: "user is already authenticate" });
-//     } else {
-//       const dbUser = await UserModel.findOne({ email:email });
-//       if (!dbUser) return res.status(405).json({ Message: "User Not Found" });
-//       const isValid = comparedPassword( password, dbUser.password );//compares db hashed pass with raw pass from user,if matches,it returns true
-//       if (isValid) {  //modify session to allow session id to be sent as cookie
-//         req.session.authenticated = true;
-//         req.session.user = email;
-//         res.status(200).json({ message: "User authenticated successfully" });
-//       } else return res.status(401).json({ message: "Bad credentials" });
-//     }
-//   } else res.status(400).json({ message: "username or password required" });
-// });
-
-//midleware to check if user is already login
-// function userAuth(req, res, next) {
-//   if (req.session.authenticated && req.session.user == req.body.email) next();
-//   else res.status(401).json({ message: "user need to login" });
-// }
 
 module.exports = router

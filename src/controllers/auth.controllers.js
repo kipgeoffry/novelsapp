@@ -1,6 +1,7 @@
 const UserModel = require("../models/users");
 const { hashPassword } = require("../utils/helpers");
 const httpStatus = require("http-status");
+const logger = require("../config/logger");
 
 //@desc registering a user route
 //@route POST /api/auth/register
@@ -12,12 +13,14 @@ const register = async (req, res, next) => {
         if (!dbUser) {
           const password = hashPassword(req.body.password);
           const newUser = await UserModel.create({ fullName, email, password });
+          logger.info("User created and added to database") 
           return res.status(201).json({
               "statusCode":httpStatus.CREATED,
               "successMessage":"user created successfully",
               "errorMessage":null,
               "data":dbUser
            });
+        
         } else
           return res
             .status(400)
@@ -29,7 +32,7 @@ const register = async (req, res, next) => {
              });
       }
      catch (error) {
-      console.log(error)
+      logger.info(error.message)
       next(error)
       }
   };
@@ -40,7 +43,7 @@ const register = async (req, res, next) => {
   const logout = (req, res, next) => {
     req.logout(err => {
       if (err)  return next(err); 
-      console.log("User logged out")
+      logger.info("User logged out")
       res.status(200).json({
         "statusCode":httpStatus.OK,
         "successMessage":"logged out successfully",
