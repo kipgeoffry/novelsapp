@@ -11,8 +11,7 @@ require('dotenv').config();
 
 
 // //import local modules
-const authRouter = require('./src/routes/auth');
-const booksRouter = require('./src/routes/books');
+const routes = require("./src/routes/usersRoutes")
 const { errorConverter, errorHandler } = require('./src/middlewares/error');
 
 //initialize app
@@ -37,9 +36,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-//routes to controllers
-app.use("/api/auth",authRouter);
-app.use("/api/books",booksRouter);
+//api routes
+app.use("/api/v1",routes);
 
 //send 404 for any unknown api requests
 app.use((req, res, next)=>{
