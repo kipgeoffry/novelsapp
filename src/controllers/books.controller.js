@@ -1,4 +1,4 @@
-const Book = require('../models/schemas/books');
+const Book = require('../models/books');
 const ApiError = require('../utils/ApiError')
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');

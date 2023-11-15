@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const httpStatus = require('http-status');
+const logger = require('../config/logger');
 
 //property will take care of body,query anf params.
 const validate = (schema, property) => { 
@@ -9,10 +10,10 @@ const validate = (schema, property) => {
         const valid = error == null;
         if (!valid){
             const errorMessage = error.details.map((details) => details.message).join(', ');
-            console.log("error::", errorMessage); 
+            logger.error(errorMessage); 
             return res.status(422).json({error: errorMessage})
         };
-        console.log("---Input data Validated successfully---")
+        logger.info("Input data validated successfully")
         next();
     };
 };
