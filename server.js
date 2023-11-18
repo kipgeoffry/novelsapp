@@ -54,9 +54,6 @@ function checkUrl(req,res,next){
     next();
 };
 
-
-
-
 const PORT = process.env.PORT || 4510;
 
 mongoose
