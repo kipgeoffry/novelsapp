@@ -20,11 +20,11 @@ const { objectId } = require('./custom.validation')
 
 //schema for getting books by using some query paramaters 
 const getBooks = Joi.object().keys({
-    title: Joi.string(),
     author: Joi.string(),
-    sortBy: Joi.string(),
-    limit: Joi.number().integer(),
-    page: Joi.number().integer(),
+    // title: Joi.string(),
+    // sortBy: Joi.string(),
+    // limit: Joi.number().integer(),
+    // page: Joi.number().integer(),
   });
 
   //schema for getting a book by id

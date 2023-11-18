@@ -2,17 +2,23 @@ const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
 const catchAsync = require("../utils/catchAsync");
 const userService = require("../services/userService")
+const { hashPassword } = require("../utils/helpers");
+const logger = require("../config/logger");
 
 //@desc create a user
 //@route POST /api/v1/users
 //@access private/protected
 const createUser = catchAsync(async (req, res) => {
-    const user = await userService.createUser(req.body)
+    const user = req.body
+    const hashPass = hashPassword(req.body.password);
+    Object.assign(user, {password:hashPass})
+    await userService.createUser(user)
+    logger.info(`${user.fullName} - ${user.email} added`)
     res.status(201).json({
         statusCode: httpStatus.CREATED,
         successMessage: "user created successfully",
         errorMessage: null,
-        data: user
+        data: null
     })
 })
 
@@ -20,7 +26,7 @@ const createUser = catchAsync(async (req, res) => {
 //@route GET /api/v1/users
 //@access private/protected
 const getUsers = catchAsync(async (req, res) => {
-    const users = await usersService.queryUsers()
+    const users = await userService.queryUsers()
     res.status(200).json({
         statusCode: httpStatus.OK,
         successMessage: "users fetched successfully",
@@ -47,22 +53,28 @@ const getUser = catchAsync(async (req, res) => {
 //@route POST /api/v1/users/:id
 //@access private/protected
 const updateUser = catchAsync(async (req, res) => {
-    const user = await userService.updateUserById(req.params.id, req.body);
+    const user = req.body
+    const hashPass = hashPassword(req.body.password);
+    Object.assign(user, {password:hashPass})
+    // await userService.createUser(user)
+    const updatedUser = await userService.updateUserById(req.params.id, user);
+    logger.info(`${user.fullName} - ${user.email} details updated successfully`)
     res.status(200).json({
         statusCode: httpStatus.OK,
         successMessage: "user details updated successfully",
         errorMessage: null,
-        data: user
+        data: updatedUser
     });
 });
 
 //@desc delete a user
-//@route DELETE DELETE /api/v1/users/:id
+//@route DELETE /api/v1/users/:id
 //@access private/protected
 const deleteUser = catchAsync(async (req, res) => {
     await userService.deleteUserById(req.params.id);
-    res.status(204).json({
-        statusCode: httpStatus.NO_CONTENT,
+    logger.info(`${user.fullName} - ${user.email} deleted successfully`)
+    res.status(200).json({
+        statusCode: httpStatus.OK,
         successMessage: "user deleted",
         errorMessage: null,
         data: null

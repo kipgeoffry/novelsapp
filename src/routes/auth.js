@@ -11,7 +11,7 @@ const router = express.Router();
 
 
 //@desc login route using passport
-//@route  POST /api/auth/login
+//@route  POST /api/v1/auth/login
 //@access public
 router.post("/login",validate(authValidation.login, 'body'),passport.authenticate('local'),(req,res)=>{
     logger.info("** login controller after user serialization **");
@@ -24,12 +24,12 @@ router.post("/login",validate(authValidation.login, 'body'),passport.authenticat
 });
 
 //@desc logout route--this removes the req.user object
-//@route POST /api/auth/logout
+//@route POST /api/v1/auth/logout
 //@access public
 router.post('/logout',authController.logout );
 
 //@desc registering a user route
-//@route POST /api/auth/register
+//@route POST /api/v1/auth/register
 //@access public
 router.post("/register", validate(authValidation.register, 'body'), authController.register);
 

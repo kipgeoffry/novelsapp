@@ -4,7 +4,7 @@ const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 
 //@desc adding a book handler
-//@route POST /api/books/add
+//@route POST /api/v1/books/
 //@access private/protected
 const addBook = async (req,res, next)=>{
     const book = req.body;
@@ -24,7 +24,7 @@ const addBook = async (req,res, next)=>{
 };
  
 //@desc get all books handler
-//@route GET /api/books/all
+//@route GET /api/v1/books/
 //@access private
 const getAllBooks = async (req,res,next)=>{
     try {
@@ -41,11 +41,12 @@ const getAllBooks = async (req,res,next)=>{
 };
 
 //@desc get books by author
-//@route GET /api/books/search
+//@route GET /api/v1/books?author=author
 //@access private/protected
 //used error collecting utility catchAsync
 const getBooks = catchAsync(async(req, res)=>{
     const { author } = req.query;
+    console.log(author)
     const book = await Book.findOne({author});
     if(!book) throw new ApiError(httpStatus.NOT_FOUND, `No books by author ${author} found`);
     res.status(200).json({
@@ -58,7 +59,7 @@ const getBooks = catchAsync(async(req, res)=>{
 
 
 //@desc get a book by id
-//@route GET /api/books/:id
+//@route GET /api/v1/books/:id
 //@access private/protected
 const getBook = catchAsync(async (req,res)=>{
     const { id } = req.params
@@ -73,7 +74,7 @@ const getBook = catchAsync(async (req,res)=>{
 });
 
 //@desc update book handler
-//@route PATCH /api/books/update/:id
+//@route PATCH /api/v1/books/:id
 //@access private/protected
 const updateBook = catchAsync(async (req,res) => {
     const { id } = req.params;
@@ -91,7 +92,7 @@ const updateBook = catchAsync(async (req,res) => {
 
 
 //@desc delete a book handler
-//@route DELETE /api/books/delete/:id
+//@route DELETE /api/v1/books/:id
 //@access private/protected
 const deleteBook = catchAsync(async (req,res,next)=>{
     const { id } = req.params

@@ -1,7 +1,7 @@
 const httpStatus = require("http-status");
 const ApiError = require("../utils/ApiError");
 const User = require("../models/users");
-const { param } = require("../routes/auth");
+const logger  = require("../config/logger")
 
 /**
  * Check if email is taken
@@ -20,8 +20,10 @@ const isEmailTaken = async function (email, excludeUserId) {
  */
 const createUser = async (userBody) => {
   if (await isEmailTaken(userBody.email)) {
+    logger.info(`User email ,${userBody.email} already exists`)
     throw new ApiError(httpStatus.BAD_REQUEST, "Email already taken");
   }
+  
   return User.create(userBody);
 };
 
@@ -63,11 +65,15 @@ const updateUserById = async (userId, updateBody) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
-  if (updateBody.email && (await isEmailTaken(updateBody.email, userId))) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,`email cannot be updated,email is already taken`
-    );
+  if (updateBody.email && (await isEmailTaken(updateBody.email, userId))) {  //another user cannot update their email to an email that alreay exists
+    logger.info(`User email ,${updateBody.email} cannot be updated`)
+    throw new ApiError(httpStatus.BAD_REQUEST,`email cannot be updated,email already exists`);
   }
+  if (updateBody.email !== user.email) { //user not allowed to change email address
+    logger.info(`user ${user.email} is not allowed to update email`)
+    throw new ApiError(httpStatus.FORBIDDEN,`email update not allowed`);
+  }
+
   Object.assign(user, updateBody);
   await user.save();
   return user;
@@ -83,7 +89,7 @@ const deleteUserById = async (userId) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
-  await user.remove();
+  await user.deleteOne();
   return user;
 };
 

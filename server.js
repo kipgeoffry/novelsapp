@@ -11,7 +11,7 @@ require('dotenv').config();
 
 
 // //import local modules
-const routes = require("./src/routes/usersRoutes")
+const routes = require("./src/routes")
 const { errorConverter, errorHandler } = require('./src/middlewares/error');
 
 //initialize app
@@ -42,7 +42,7 @@ app.use("/api/v1",routes);
 //send 404 for any unknown api requests
 app.use((req, res, next)=>{
   logger.info(`endpoint not found => ${req.method}: ${req.url} `)
-  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'))});
+  next(new ApiError(httpStatus.NOT_FOUND, 'endpoint not found'))});
 
 //middleware error Handlerrrors
 app.use(errorConverter);
